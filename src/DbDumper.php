@@ -255,14 +255,14 @@ abstract class DbDumper
         }
     }
 
-    protected function echoToFile(string $command, string $dumpFile): string
+    protected function echoToFile(string $command, string $dumpFile = null): string
     {
-        $compressor = $this->compressor
-            ? ' | '.$this->compressor->useCommand()
-            : '';
+        $dumpFile = $dumpFile ? '"'.addcslashes($dumpFile, '\\"').'"' : null;
 
-        $dumpFile = '"'.addcslashes($dumpFile, '\\"').'"';
+        if ($this->compressor) {
+            return $this->getCompressCommand($command, $dumpFile);
+        }
 
-        return $command.$compressor.' > '.$dumpFile;
+        return $command. ($dumpFile ? (' > '.$dumpFile) : '');
     }
 }
